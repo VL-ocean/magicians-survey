@@ -19,16 +19,16 @@ SHEET_QUESTIONS = SHEET.worksheet('questions')
 
 def get_questons():
 
-    # get insight on how many questions are in the sheet
-    all_questions = SHEET_QUESTIONS.get_all_values()
+    # read the quantity of questions in the sheet
+    questions_count = len(SHEET_QUESTIONS.col_values(1))
 
-    # based on row count, get each question with answers as a list and add into overall list of questions
+    # prepare new list for questions
     questions_list = []
-    for index in range(len(all_questions)):
-        # since index starts at 0, but row should start from 1, we increase index by 1 before getting values
-        index = index + 1
-        # add each row values into the general list
-        questions_list.append(SHEET_QUESTIONS.row_values(index))
+
+    for index in range(1, questions_count + 1):
+        original_list = SHEET_QUESTIONS.row_values(index)
+        answer_options_list = original_list[1:]
+        questions_list.append([original_list[0], answer_options_list])
 
     return questions_list
 
@@ -37,31 +37,37 @@ def display_questions(questions):
 
     answers_list = []
 
-    for list in questions:
+    
 
-        # get and print a question
-        question = list[0] + "\n"
-        print(question)
+    # for list in questions:
 
-        # loop through answers and print each of them adding the option's number
-        for option in range(1, len(list)):
-            option = f"({option}) - {list[option]}"
-            print(option)
+    #     # get and print a question
+    #     question = "\n" + list[0] + "\n"
+    #     print(question)
 
-        # get user's input and save the answer in a list
-        print("\n")
-        answer = int(input("Enter your option number here: "))
-        answers_list.append(list[answer])
-        print("\n\n")
+    #     # loop through answers and print each of them adding the option's number
+    #     for option in range(1, len(list)):
+    #         option = f"({option}) - {list[option]}"
+    #         print(option)
 
-    return answers_list
+    #     # get user's input
+    #     print("")
+    #     answer = int(input("Enter your option number here: "))
+    #     print("")
 
+    #     # save the answer in a list
+    #     answers_list.append(list[answer])
 
-def main():
-
-    questions = get_questons()
-    answers = display_questions(questions)
-    print(answers)
+    return answers_list 
 
 
-main()
+# def main():
+
+#     questions = get_questons()
+#     print(questions)
+
+
+
+# main()
+
+get_questons()
