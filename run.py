@@ -1,5 +1,7 @@
 import gspread
 from google.oauth2.service_account import Credentials
+import time
+from datetime import date
 
 
 SCOPE = [
@@ -33,11 +35,17 @@ def get_questons():
     return questions_list
 
 
+def get_date_and_time():
+
+    user_date = time.strftime("%d %b %Y", time.gmtime())
+    user_time = time.strftime("%H:%M:%S", time.gmtime())
+
+    return [user_date, user_time]
+
+
 def display_questions(questions):
 
-    answers_list = []
-
-    
+    answers_list = get_date_and_time()
 
     # for list in questions:
 
@@ -61,13 +69,13 @@ def display_questions(questions):
     return answers_list 
 
 
-# def main():
+def main():
 
-#     questions = get_questons()
-#     print(questions)
+    questions = get_questons()
+    user_answer = display_questions(questions)
+    print(user_answer)
 
 
 
-# main()
+main()
 
-get_questons()
