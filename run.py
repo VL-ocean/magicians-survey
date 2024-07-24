@@ -6,6 +6,8 @@ import sys
 import subprocess
 import os
 from colorama import Fore, Back, Style
+from rich.console import Console
+from rich.table import Table
 
 
 SCOPE = [
@@ -25,9 +27,7 @@ SHEET_QUESTIONS = SHEET.worksheet('questions')
 
 # Clear the terminal from all text
 def wipe_terminal():
-    """
-        Delete all text in the terminal
-    """
+    # Delete all text in the terminal
     if os.name == "posix":  # Identify if OS is macOS or Linux
         os.system("clear")
     elif os.name == "nt":  # Identify of OS is Windows
@@ -129,13 +129,85 @@ def choice():
         except ValueError:
             print(Fore.RED + "Please enter a number" + Style.RESET_ALL)
 
+
+def count_keyword(keyword, data_list):
+    num = 0
+    for list in data_list:
+        if keyword in list:
+            num += 1
+    return num
+
+
+def count_percentage(num_of_keyword, num_of_replies):
+    if num_of_keyword == 0:
+        return 0
+    else:
+        percentage = round((num_of_keyword * 100) / num_of_replies, 2)
+        return percentage
+
+
+def build_statistics(questions):
+
+    statistics_list = []
+    
+    list_of_lists = SHEET_DATA.get_all_values()
+    data_list = list_of_lists[1:]
+    num_of_replies = len(data_list)
+
+    statistics_list.append(num_of_replies)
+
+    for question in questions:
+        question_statistics = []
+
+        for keyword in question[1]:
+
+            num_of_keyword = count_keyword(keyword, data_list)
+            percent_of_keyword = count_percentage(num_of_keyword, num_of_replies)
+            question_statistics.append(percent_of_keyword)
+
+        statistics_list.append(question_statistics)
+
+    return statistics_list
+
+
+def show_statistics(questions, statistics):
+
+    wipe_terminal()
+    print(f"The survey was completed by {statistics[0]} people.")
+    print("-" * 50)
+    print("")
+
+    table = Table(title="Statistics")
+
+    table.add_column("Option", style="magenta", no_wrap=True)
+    table.add_column("Percentage", style="green", no_wrap=True)
+    
+    table.add_row(questions[0][1])
+    table.add_row(statistics[1])
+
+    console = Console()
+    console.print(table)
+
+    print(statistics)
+
+
+
 def main():
 
     questions = get_questons()
-    user_answer = display_questions(questions)
-    push_user_data(user_answer)
+    # user_answer = display_questions(questions)
+    # push_user_data(user_answer)
+    statistics = build_statistics(questions)
+    show_statistics(questions, statistics)
 
 
 if choice():
     main()
+
+
+
+
+
+
+
 
