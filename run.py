@@ -2,6 +2,10 @@ import gspread
 from google.oauth2.service_account import Credentials
 import time
 from datetime import date
+import sys
+import subprocess
+import os
+from colorama import Fore, Back, Style
 
 
 SCOPE = [
@@ -17,6 +21,17 @@ GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('survey-data')
 SHEET_DATA = SHEET.worksheet('data')
 SHEET_QUESTIONS = SHEET.worksheet('questions')
+
+
+# Clear the terminal from all text
+def wipe_terminal():
+    """
+        Delete all text in the terminal
+    """
+    if os.name == "posix":  # Identify if OS is macOS or Linux
+        os.system("clear")
+    elif os.name == "nt":  # Identify of OS is Windows
+        os.system("cls")
 
 
 def get_questons():
@@ -47,35 +62,80 @@ def display_questions(questions):
 
     answers_list = get_date_and_time()
 
-    # for list in questions:
+    for question_list in questions:
 
-    #     # get and print a question
-    #     question = "\n" + list[0] + "\n"
-    #     print(question)
+        wipe_terminal()
+        # get and print a question
+        question = "\n" + question_list[0] + "\n"
+        print(question)
 
-    #     # loop through answers and print each of them adding the option's number
-    #     for option in range(1, len(list)):
-    #         option = f"({option}) - {list[option]}"
-    #         print(option)
+        # loop through answers and print each of them adding the option's number
+        for index in (range(len(question_list[1]))):
+            num = index + 1
+            option_for_user = f"({Fore.YELLOW}{num}{Style.RESET_ALL}) - {question_list[1][index]}"
+            print(option_for_user)
 
-    #     # get user's input
-    #     print("")
-    #     answer = int(input("Enter your option number here: "))
-    #     print("")
-
-    #     # save the answer in a list
-    #     answers_list.append(list[answer])
+        while True:
+            try:
+                # get user's input
+                print("")
+                answer = int(input(Fore.YELLOW + "Enter your option number here: " + Style.RESET_ALL))
+                if answer == 0:
+                    wipe_terminal()
+                    raise SystemExit
+                elif answer < 0:
+                    raise IndexError
+                else:
+                    # save the answer in a list
+                    answer_index = answer - 1
+                    answers_list.append(question_list[1][answer_index])
+                    wipe_terminal()
+                    break
+            except ValueError:
+                print(Fore.RED + "Please enter a number" + Style.RESET_ALL)
+            except IndexError:
+                print(Fore.RED + "Please choose a number from available options" + Style.RESET_ALL)
 
     return answers_list 
 
+
+def push_user_data(data):
+    SHEET_DATA.append_row(data)
+    print(Fore.BLUE + "\nThe answers has been saved.\nThank you for filling out our survey!" + Style.RESET_ALL)
+    time.sleep(2)
+
+
+def choice():
+
+    print(Fore.GREEN + "\n\nWelcome to the anonymous survey for magicians!\n" + Style.RESET_ALL)
+    print(Fore.BLUE + "You will go through 10 questions." + Style.RESET_ALL)
+    print(Fore.BLUE + "Please choose the option that suits you the most." + Style.RESET_ALL)
+    print(Fore.BLUE + "If you would like to exit the survey, please enter " + Style.RESET_ALL + Fore.RED + "0" + Style.RESET_ALL + Fore.BLUE + " anytime you feel so.\n" + Style.RESET_ALL)
+    while True:
+        try:
+            print("Would you like to start the survey?")
+            option = int(input("(" + Fore.YELLOW + "1" + Style.RESET_ALL + ") - yes or (" + Fore.YELLOW + "2" + Style.RESET_ALL + ") - no: "))
+            if option == 0:
+                wipe_terminal()
+                raise SystemExit
+            elif option == 2:
+                wipe_terminal()
+                raise SystemExit
+            elif option == 1:
+                return True
+                break
+            else:
+                print(Fore.RED + "Please choose a number from available options" + Style.RESET_ALL)
+        except ValueError:
+            print(Fore.RED + "Please enter a number" + Style.RESET_ALL)
 
 def main():
 
     questions = get_questons()
     user_answer = display_questions(questions)
-    print(user_answer)
+    push_user_data(user_answer)
 
 
-
-main()
+if choice():
+    main()
 
