@@ -72,7 +72,7 @@ def display_questions(questions):
 
         wipe_terminal()
         # get and print a question
-        question = "\n" + question_list[0] + "\n"
+        question = "\n" + " " + question_list[0] + "\n"
         print(question)
 
         # loop through answers
@@ -80,8 +80,9 @@ def display_questions(questions):
         for index in range(len(question_list[1])):
             num = index + 1
             option_for_user = (
-                f"({Fore.YELLOW}{num}{Style.RESET_ALL})"
-                f" - {question_list[1][index]}")
+                f" ({Fore.YELLOW}{num}{Style.RESET_ALL})"
+                f" - {question_list[1][index]}"
+            )
             print(option_for_user)
 
         while True:
@@ -91,7 +92,7 @@ def display_questions(questions):
                 answer = int(
                     input(
                         Fore.YELLOW
-                        + "Enter your option number here: "
+                        + " Enter your option number here: "
                         + Style.RESET_ALL
                     )
                 )
@@ -107,12 +108,16 @@ def display_questions(questions):
                     wipe_terminal()
                     break
             except ValueError:
-                print(Fore.RED + "Please enter a number" + Style.RESET_ALL)
+                print(Fore.RED + " Please enter a number" + Style.RESET_ALL)
             except IndexError:
                 print(
                     Fore.RED
-                    + "Please choose a number from available options"
+                    + " Please choose a number from available options"
                     + Style.RESET_ALL
+                )
+            except KeyboardInterrupt:
+                print(
+                    Fore.RED + "\n Please enter a number" + Style.RESET_ALL
                 )
 
     return answers_list
@@ -125,8 +130,8 @@ def push_user_data(data):
     SHEET_DATA.append_row(data)
     print(
         Fore.BLUE
-        + "\nThe answers has been saved."
-        + "\nThank you for filling out our survey!"
+        + "\n The answers has been saved."
+        + "\n Thank you for filling out our survey!"
         + Style.RESET_ALL
     )
     time.sleep(2)
@@ -139,18 +144,18 @@ def choice():
     """
     print(
         Fore.GREEN
-        + "\n\nWelcome to the anonymous survey for magicians!\n"
+        + "\n\n Welcome to the anonymous survey for magicians!\n"
         + Style.RESET_ALL
     )
-    print(Fore.BLUE + "You will go through 10 questions." + Style.RESET_ALL)
+    print(Fore.BLUE + " You will go through 10 questions." + Style.RESET_ALL)
     print(
         Fore.BLUE
-        + "Please choose the option that suits you the most."
+        + " Please choose the option that suits you the most."
         + Style.RESET_ALL
     )
     print(
         Fore.BLUE
-        + "If you would like to exit the survey, please enter "
+        + " If you would like to exit the survey, please enter "
         + Style.RESET_ALL
         + Fore.RED
         + "0"
@@ -162,10 +167,10 @@ def choice():
 
     while True:
         try:
-            print("Would you like to start the survey?")
+            print("\n Would you like to start the survey?")
             option = int(
                 input(
-                    "("
+                    " ("
                     + Fore.YELLOW
                     + "1"
                     + Style.RESET_ALL
@@ -188,11 +193,13 @@ def choice():
             else:
                 print(
                     Fore.RED
-                    + "Please choose a number from available options"
+                    + " Please choose a number from available options"
                     + Style.RESET_ALL
                 )
         except ValueError:
-            print(Fore.RED + "Please enter a number" + Style.RESET_ALL)
+            print(Fore.RED + " Please enter a number" + Style.RESET_ALL)
+        except KeyboardInterrupt:
+            print(Fore.RED + "\n Please enter a number" + Style.RESET_ALL)
 
 
 def count_keyword(keyword, data_list):
@@ -252,9 +259,12 @@ def show_statistics(questions, statistics):
     calculated based on the total number of replies
     """
     wipe_terminal()
-    print((
-        f"The survey was completed by {Fore.CYAN}{statistics[0]}"
-        f"{Style.RESET_ALL} people.\nYou can see the overall statistics below")
+    print(
+        (
+            f"\n The survey was completed by {Fore.CYAN}{statistics[0]}"
+            f"{Style.RESET_ALL} people."
+            f"\n You can see the overall statistics below"
+        )
     )
     print("-" * 79)
     print("")
@@ -284,10 +294,10 @@ def exit_or_restart():
     """
     while True:
         try:
-            print("\nWould you like to start the survey again or exit?")
+            print("\n Would you like to start the survey again or exit?")
             option = int(
                 input(
-                    "("
+                    " ("
                     + Fore.YELLOW
                     + "1"
                     + Style.RESET_ALL
@@ -315,19 +325,36 @@ def exit_or_restart():
                 )
         except ValueError:
             print(Fore.RED + "Please enter a number" + Style.RESET_ALL)
+        except KeyboardInterrupt:
+            print(Fore.RED + "\n Please enter a number" + Style.RESET_ALL)
 
 
 def main():
     """
     Controls the app flow
     """
-    questions = get_questons()
-    user_answer = display_questions(questions)
-    push_user_data(user_answer)
-    statistics = build_statistics(questions)
-    show_statistics(questions, statistics)
-    if exit_or_restart():
-        main()
+    try:
+        questions = get_questons()
+        user_answer = display_questions(questions)
+        push_user_data(user_answer)
+        statistics = build_statistics(questions)
+        show_statistics(questions, statistics)
+        if exit_or_restart():
+            main()
+    except KeyboardInterrupt:
+        wipe_terminal()
+        print(
+            Fore.RED
+            + "\n The app flow was interrupted.\n"
+            + " Please click on "
+            + Style.RESET_ALL
+            + Fore.YELLOW
+            + "Run program"
+            + Style.RESET_ALL
+            + Fore.RED
+            + " to restart it"
+            + Style.RESET_ALL
+        )
 
 
 # Starts the survey, offers the exit option
