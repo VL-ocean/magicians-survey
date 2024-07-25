@@ -142,7 +142,7 @@ def count_percentage(num_of_keyword, num_of_replies):
     if num_of_keyword == 0:
         return 0
     else:
-        percentage = round((num_of_keyword * 100) / num_of_replies, 2)
+        percentage = round((num_of_keyword * 100) / num_of_replies, 1)
         return percentage
 
 
@@ -173,36 +173,63 @@ def build_statistics(questions):
 def show_statistics(questions, statistics):
 
     wipe_terminal()
-    print(f"The survey was completed by {statistics[0]} people.")
-    print("-" * 50)
+    print(f"The survey was completed by {Fore.CYAN}{statistics[0]}{Style.RESET_ALL} people.\nYou can see the overall statistics below")
+    print("-" * 79)
     print("")
+    time.sleep(3)
 
-    table = Table(title="Statistics")
+    for question, stats in zip(questions, statistics[1:]):
 
-    table.add_column("Option", style="magenta", no_wrap=True)
-    table.add_column("Percentage", style="green", no_wrap=True)
+        table = Table(title=question[0], title_style="cyan")
+
+        table.add_column("Option", style="magenta", no_wrap=True)
+        table.add_column("Percentage", style="green",  justify="right", no_wrap=True)
     
-    table.add_row(questions[0][1])
-    table.add_row(statistics[1])
+        for option, percent in zip(question[1], stats):
+            table.add_row(option, str(percent) + " %")
 
-    console = Console()
-    console.print(table)
+        console = Console()
+        console.print(table)
+        print("")
+        time.sleep(2)
 
-    print(statistics)
 
+def exit_or_restart():
+
+    while True:
+        try:
+            print("\nWould you like to start the survey again or exit?")
+            option = int(input("(" + Fore.YELLOW + "1" + Style.RESET_ALL + ") - survey or (" + Fore.YELLOW + "2" + Style.RESET_ALL + ") - exit: "))
+            if option == 0:
+                wipe_terminal()
+                raise SystemExit
+            elif option == 2:
+                wipe_terminal()
+                raise SystemExit
+            elif option == 1:
+                return True
+                break
+            else:
+                print(Fore.RED + "Please choose a number from available options" + Style.RESET_ALL)
+        except ValueError:
+            print(Fore.RED + "Please enter a number" + Style.RESET_ALL)
 
 
 def main():
-
+    
     questions = get_questons()
-    # user_answer = display_questions(questions)
-    # push_user_data(user_answer)
+    user_answer = display_questions(questions)
+    push_user_data(user_answer)
     statistics = build_statistics(questions)
     show_statistics(questions, statistics)
+    if exit_or_restart():
+        main()
 
 
 if choice():
     main()
+
+
 
 
 
