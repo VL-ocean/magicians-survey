@@ -1,9 +1,6 @@
 import gspread
 from google.oauth2.service_account import Credentials
 import time
-from datetime import date
-import sys
-import subprocess
 import os
 from colorama import Fore, Back, Style
 from rich.console import Console
