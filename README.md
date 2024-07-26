@@ -43,6 +43,7 @@ This application is a tool to do a survey. It uses Google Sheets to save the res
   * [Tutorials & Content](#tutorials--content)
 
 * [Misc.](#misc)
+  * [Google Sheet File Structure](#google-sheet-file-structure)
   * [Questions used](#questions-used)
 
 
