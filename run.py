@@ -316,12 +316,10 @@ def show_statistics(questions, statistics):
 
     for question, stats in zip(questions, statistics[1:]):
 
-        table = Table(title=question[0], title_style="cyan", highlight="True")
+        table = Table(title=question[0])
 
-        table.add_column("Option", style="magenta", no_wrap=True)
-        table.add_column(
-            "Percentage", style="green", justify="right", no_wrap=True
-        )
+        table.add_column("Option", no_wrap=True)
+        table.add_column("Percentage", justify="right", no_wrap=True)
 
         for option, percent in zip(question[1], stats):
             table.add_row(option, str(percent) + " %")
@@ -339,8 +337,9 @@ def exit_or_restart():
     while True:
         try:
             print(
-                Style.BRIGHT
-                + "\n Would you like to start the survey again or exit?"
+                "\n"
+                + Style.BRIGHT
+                + " Would you like to start the survey again or exit?"
                 + Style.RESET_ALL
             )
             option = int(
