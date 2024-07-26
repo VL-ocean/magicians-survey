@@ -74,10 +74,6 @@ Users can do the survey and answer 10 questions. The information can be analyzed
 
 ![Yellow options](./README-images/yellow-options.png)
 
-- The tables are coloured in magenta and green.
-
-![Table](./README-images/table-color.png)
-
 
 ### Flowchart
 
